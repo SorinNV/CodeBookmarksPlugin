@@ -1,5 +1,5 @@
 <idea-plugin>
-    <id>com.github.sorinnv.codebookmarksplugin</id>
+    <id>com.github.sorinnv.codeBookmarks</id>
     <name>CodeBookmarksPlugin</name>
     <vendor>sorinnv</vendor>
 
@@ -8,12 +8,22 @@
     <depends>com.intellij.modules.platform</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <applicationService serviceImplementation="com.github.sorinnv.codebookmarksplugin.services.MyApplicationService"/>
-        <projectService serviceImplementation="com.github.sorinnv.codebookmarksplugin.services.MyProjectService"/>
+        <toolWindow id="Code Bookmarks" secondary = "true" anchor="left"
+                    factoryClass="com.github.sorinnv.codeBookmarks.toolWindow.BookmarksToolWindowFactory"/>
     </extensions>
 
-    <applicationListeners>
-        <listener class="com.github.sorinnv.codebookmarksplugin.listeners.MyProjectManagerListener"
-                  topic="com.intellij.openapi.project.ProjectManagerListener"/>
-    </applicationListeners>
+    <actions>
+        <group id="com.github.sorinnv.codeBookmarks.CodeBookmarksGroup" text="Code Bookmarks" popup="true">
+            <add-to-group group-id="GoToMenu" anchor="after"
+                          relative-to-action="com.github.sorinnv.codeBookmarks.AddingBookmarkAction"/>
+            <action id="com.github.sorinnv.codeBookmarks.AddingBookmarkAction"
+                    class="com.github.sorinnv.codeBookmarks.AddingBookmarkAction" text="Add Code Bookmark"
+                    description="Action which adds code bookmark">
+                <keyboard-shortcut keymap="$default" first-keystroke="control alt A" second-keystroke="B"/>
+                <mouse-shortcut keymap="$default" keystroke="control button3 doubleClick"/>
+            </action>
+        </group>
+
+
+    </actions>
 </idea-plugin>
