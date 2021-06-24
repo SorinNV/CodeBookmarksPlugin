@@ -10,6 +10,8 @@
     <extensions defaultExtensionNs="com.intellij">
         <toolWindow id="Code Bookmarks" secondary = "true" anchor="left"
                     factoryClass="com.github.sorinnv.codeBookmarks.toolWindow.BookmarksToolWindowFactory"/>
+        <codeInsight.lineMarkerProvider language="JAVA"
+                                        implementationClass="com.github.sorinnv.codeBookmarks.gutter.BookmarksLineMarkerProvider"/>
     </extensions>
 
     <actions>

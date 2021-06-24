@@ -2,7 +2,7 @@ package com.github.sorinnv.codeBookmarks.toolWindow;
 
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.ui.components.JBList;
-
+import com.intellij.ui.components.JBScrollPane;
 
 
 import javax.swing.*;
@@ -17,7 +17,7 @@ public class BookmarksToolWindow {
         JBList<String> list = new JBList<>(data);
 
         content.setLayout(new FlowLayout(FlowLayout.LEFT));
-        content.add("Bookmarks", list);
+        content.add("Bookmarks", new JBScrollPane(list));
     }
 
     public JPanel getContent() {
