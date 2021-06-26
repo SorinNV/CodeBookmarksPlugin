@@ -1,5 +1,6 @@
 package com.github.sorinnv.codeBookmarks.gutter;
 
+import com.github.sorinnv.codeBookmarks.BookmarkIcons;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider;
 import com.intellij.navigation.GotoRelatedItem;
@@ -29,7 +30,7 @@ public class BookmarksLineMarkerProvider extends RelatedItemLineMarkerProvider {
         RelatedItemLineMarkerInfo<PsiElement> info =
                 new RelatedItemLineMarkerInfo<>(element,
                         element.getTextRange(),
-                        GutterIcons.Icon,
+                        BookmarkIcons.GutterIcon,
                         null,
                         null,
                         GutterIconRenderer.Alignment.LEFT,
