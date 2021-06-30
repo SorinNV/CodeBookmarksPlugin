@@ -12,6 +12,7 @@
                     factoryClass="com.github.sorinnv.codeBookmarks.toolWindow.BookmarksToolWindowFactory"/>
         <codeInsight.lineMarkerProvider language="JAVA"
                                         implementationClass="com.github.sorinnv.codeBookmarks.gutter.BookmarksLineMarkerProvider"/>
+        <projectService serviceImplementation="com.github.sorinnv.codeBookmarks.BookmarksManager"/>
     </extensions>
 
     <actions>

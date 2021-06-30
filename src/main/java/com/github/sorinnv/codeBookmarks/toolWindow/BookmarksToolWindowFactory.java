@@ -21,7 +21,7 @@ public class BookmarksToolWindowFactory implements ToolWindowFactory {
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
         Objects.requireNonNull(ToolWindowManager.getInstance(project).getToolWindow("Code Bookmarks")).setIcon(BookmarkIcons.ToolWindowIcon);
-        BookmarksToolWindow bookmarksToolWindow = new BookmarksToolWindow(toolWindow);
+        BookmarksToolWindow bookmarksToolWindow = new BookmarksToolWindow(toolWindow, project);
         ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
         Content content = contentFactory.createContent(bookmarksToolWindow.getContent(), "", false);
         toolWindow.getContentManager().addContent(content);

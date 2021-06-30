@@ -1,26 +1,129 @@
 package com.github.sorinnv.codeBookmarks.toolWindow;
 
+import com.github.sorinnv.codeBookmarks.Bookmark;
+import com.github.sorinnv.codeBookmarks.BookmarksManager;
+import com.intellij.ide.dnd.aware.DnDAwareTree;
+import com.intellij.ide.favoritesTreeView.FavoritesListener;
+import com.intellij.ide.projectView.ViewSettings;
+import com.intellij.ide.projectView.impl.ProjectViewTree;
+import com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode;
+import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.IdeActions;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
-import com.intellij.ui.components.JBList;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.SmartPsiElementPointer;
+import com.intellij.ui.ToolbarDecorator;
+import com.intellij.ui.TreeSpeedSearch;
 import com.intellij.ui.components.JBScrollPane;
+import com.intellij.util.EditSourceOnDoubleClickHandler;
+import com.intellij.util.EditSourceOnEnterKeyHandler;
+import com.intellij.util.ui.JBUI;
+import com.intellij.util.ui.tree.TreeUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 
 import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
+import java.util.List;
 
 public class BookmarksToolWindow {
     private final JPanel content = new JPanel();
-    public BookmarksToolWindow(ToolWindow toolWindow) {
-        String[] data = {"Bookmark1 ffffffffffffffffffffffffffffffffaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-                "Bookmark2 ffffffffffffffffffffffffffffffffffffffffffff",
-                "Bookmark3 ffffffffffffffffffffffffffffffffffffffffffff"};
-        JBList<String> list = new JBList<>(data);
+    private final Project project;
+    final DnDAwareTree tree;
 
-        content.setLayout(new FlowLayout(FlowLayout.LEFT));
-        content.add("Bookmarks", new JBScrollPane(list));
+    public BookmarksToolWindow(ToolWindow toolWindow, Project project) {
+        this.project = project;
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode();
+        root.setUserObject(new ProjectViewProjectNode(project, new ViewSettings() {
+                }));
+
+        DefaultTreeModel treeModel = new DefaultTreeModel(root);
+        tree = new DnDAwareTree(treeModel) {
+            @Override
+            public boolean isFileColorsEnabled() {
+                return ProjectViewTree.isFileColorsEnabledFor(this);
+            }
+
+            @Override
+            public Color getFileColorFor(Object object) {
+                return ProjectViewTree.getColorForElement(getPsiElement(object));
+            }
+        };
+        TreeUtil.installActions(tree);
+        tree.setRootVisible(false);
+        tree.setShowsRootHandles(true);
+        tree.setLargeModel(true);
+        new TreeSpeedSearch(tree);
+        ToolTipManager.sharedInstance().registerComponent(tree);
+        EditSourceOnDoubleClickHandler.install(tree);
+        EditSourceOnEnterKeyHandler.install(tree);
+
+        ToolbarDecorator decorator = ToolbarDecorator.createDecorator(tree)
+                .initPosition()
+                .disableAddAction().disableRemoveAction().disableDownAction().disableUpAction();
+
+        AnAction action = ActionManager.getInstance().getAction(IdeActions.ACTION_NEW_ELEMENT);
+        action.registerCustomShortcutSet(action.getShortcutSet(), tree);
+        JPanel panel = decorator.createPanel();
+        panel.setBorder(JBUI.Borders.empty());
+        content.add(new JBScrollPane(panel), BorderLayout.CENTER);
+        content.setBorder(JBUI.Borders.empty());
+
+        BookmarksManager bookmarksManager = project.getService(BookmarksManager.class);
+        bookmarksManager.addBookmarksListener(new FavoritesListener() {
+            @Override
+            public void rootsChanged() {
+                doUpdate();
+            }
+
+            @Override
+            public void listAdded(@NotNull String listName) {
+                doUpdate();
+            }
+
+            @Override
+            public void listRemoved(@NotNull String listName) {
+                doUpdate();
+            }
+        }, project);
+    }
+    private void doUpdate() {
+        List<Bookmark> bookmarkList = BookmarksManager.getInstance(project).getBookmarks();
+
+        //tree.removeAll();
+
+        for (Bookmark bookmark: bookmarkList) {
+            tree.add(new JTextField(bookmark.getDescription() + " " +
+                    bookmark.getUrl() + ": " +
+                    bookmark.getLine()));
+        }
+
+        System.out.println("tree have some changes");
+
+        //tree.revalidate();
+        tree.repaint();
     }
 
     public JPanel getContent() {
         return content;
+    }
+
+    @Nullable
+    private PsiElement getPsiElement(@Nullable Object element) {
+        if (element instanceof Bookmark) {
+            element = ((Bookmark)element).getFile();
+        }
+        if (element instanceof PsiElement) {
+            return (PsiElement)element;
+        }
+        else if (element instanceof SmartPsiElementPointer) {
+            return ((SmartPsiElementPointer)element).getElement();
+        }
+        return null;
     }
 }
