@@ -6,6 +6,8 @@ import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider;
 import com.intellij.navigation.GotoRelatedItem;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.psi.PsiElement;
+
+import com.intellij.psi.impl.source.tree.LeafElement;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,10 +24,13 @@ public class BookmarksLineMarkerProvider extends RelatedItemLineMarkerProvider {
     @Override
     protected void collectNavigationMarkers(@NotNull PsiElement element,
                                             @NotNull Collection<? super RelatedItemLineMarkerInfo<?>> result) {
+
         final ArrayList<GotoRelatedItem> targets = new ArrayList<>();
         collectTargets(element, targets, GotoRelatedItem::new);
 
         if (targets.isEmpty()) return;
+
+        if (!(element instanceof LeafElement)) return;
 
         RelatedItemLineMarkerInfo<PsiElement> info =
                 new RelatedItemLineMarkerInfo<>(element,
