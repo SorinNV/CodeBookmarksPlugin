@@ -27,6 +27,7 @@ repositories {
     mavenCentral()
 }
 dependencies {
+    implementation("org.junit.jupiter:junit-jupiter:5.7.0")
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.17.1")
 }
 
@@ -77,6 +78,10 @@ tasks {
         jvmTarget = "1.8"
     }
 
+    withType<Test> {
+        useJUnitPlatform()
+        systemProperty("idea.home.path", "/Program Files/JetBrains/IntelliJ IDEA 2020.3.2")
+    }
     patchPluginXml {
         version.set(properties("pluginVersion"))
         sinceBuild.set(properties("pluginSinceBuild"))
