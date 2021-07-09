@@ -1,44 +1,38 @@
 package com.github.sorinnv.codeBookmarks;
 
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.testFramework.RunsInEdt;
-import com.intellij.testFramework.fixtures.*;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 
+public class BookmarkTest extends BasePlatformTestCase {
 
-//public class BookmarkTest extends LightJavaCodeInsightFixtureTestCase {
-//
-//    @Override
-//    protected String getTestDataPath() {
-//        return "src/test/testData";
-//    }
-//
-//    protected void initFixture() {
-//        myFixture.configureByFile("BookmarkTestData.java");
-//    }
-//
-//    public void testCreatingBookmark() {
-//        initFixture();
-//        VirtualFile file = myFixture.getFile().getVirtualFile();
-//        int line = myFixture.getEditor().getCaretModel().getLogicalPosition().line;
-//        String description = "description";
-//        assert(file != null);
-//        Bookmark bookmark = new Bookmark(myFixture.getProject(),
-//                file,
-//                line,
-//                description);
-//        assert(bookmark.getLine() == line);
-//        assert(bookmark.getFile().equals(file));
-//        assert(bookmark.getDescription().equals(description));
-//        assert(bookmark.isValid());
-//        assert(bookmark.getUrl().equals(file.getUrl()));
-//        assert(bookmark.getIcon() == BookmarkIcons.GutterIcon);
-//    }
-//}
-@RunsInEdt
-public class BookmarkTest {
+    @Override
+    protected String getTestDataPath() {
+        return "src/test/testData";
+    }
+
+    protected void initFixture() {
+        myFixture.configureByFile("BookmarkTestData.java");
+    }
+
+    public void testCreatingBookmark() {
+        initFixture();
+        VirtualFile file = myFixture.getFile().getVirtualFile();
+        int line = myFixture.getEditor().getCaretModel().getLogicalPosition().line;
+        String description = "description";
+        assertNotNull(file);
+        Bookmark bookmark = new Bookmark(myFixture.getProject(),
+                file,
+                line,
+                description);
+        assertEquals(line, bookmark.getLine());
+        assertEquals(bookmark.getFile(), file);
+        assertEquals(description, bookmark.getDescription());
+        assertTrue(bookmark.isValid());
+        assertEquals(file.getUrl(), bookmark.getUrl());
+        assertEquals(BookmarkIcons.GutterIcon, bookmark.getIcon());
+    }
+}
+/*public class BookmarkTest {
     private CodeInsightTestFixture myFixture;
 
     @BeforeEach
@@ -78,4 +72,4 @@ public class BookmarkTest {
         assert(bookmark.getUrl().equals(file.getUrl()));
         assert(bookmark.getIcon() == BookmarkIcons.GutterIcon);
     }
-}
+}*/

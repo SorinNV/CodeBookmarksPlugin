@@ -5,8 +5,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 fun properties(key: String) = project.findProperty(key).toString()
 
 plugins {
-    // Java support
-    id("java")
     // Kotlin support
     id("org.jetbrains.kotlin.jvm") version "1.5.10"
     // gradle-intellij-plugin - read more: https://github.com/JetBrains/gradle-intellij-plugin
@@ -27,7 +25,7 @@ repositories {
     mavenCentral()
 }
 dependencies {
-    implementation("org.junit.jupiter:junit-jupiter:5.7.0")
+    testCompileOnly("org.junit.jupiter:junit-jupiter:5.7.0")
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.17.1")
 }
 
@@ -78,10 +76,6 @@ tasks {
         jvmTarget = "1.8"
     }
 
-    withType<Test> {
-        useJUnitPlatform()
-        systemProperty("idea.home.path", "/Program Files/JetBrains/IntelliJ IDEA 2020.3.2")
-    }
     patchPluginXml {
         version.set(properties("pluginVersion"))
         sinceBuild.set(properties("pluginSinceBuild"))
