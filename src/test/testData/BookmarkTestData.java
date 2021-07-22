@@ -1,5 +1,5 @@
 public class BookmarkTestData {
     public static void main(String[] args) {
-        System.out.println("Hello");
+        <caret>System.out.println("Hello");
     }
 }

@@ -8,21 +8,30 @@
     <depends>com.intellij.modules.platform</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <projectService serviceImplementation="com.github.sorinnv.codeBookmarks.BookmarksManager"/>
+        <projectService serviceImplementation="com.github.sorinnv.codeBookmarks.BookmarkManager"/>
+        <postStartupActivity implementation="com.github.sorinnv.codeBookmarks.BookmarkManager$MyStartupActivity"/>
     </extensions>
 
     <actions>
+
         <group id="com.github.sorinnv.codeBookmarks.CodeBookmarksGroup" text="Code Bookmarks" popup="true">
-            <add-to-group group-id="GoToMenu" anchor="after"
-                          relative-to-action="com.github.sorinnv.codeBookmarks.AddingBookmarkAction"/>
             <action id="com.github.sorinnv.codeBookmarks.ToggleBookmarkAction"
                     class="com.github.sorinnv.codeBookmarks.ToggleBookmarkAction" text="Toggle Code Bookmark"
                     description="Action which toggle code bookmark">
                 <keyboard-shortcut keymap="$default" first-keystroke="control alt A" second-keystroke="B"/>
                 <mouse-shortcut keymap="$default" keystroke="control button3 doubleClick"/>
             </action>
+            <separator/>
+
+            <add-to-group group-id="GoToMenu" anchor="last"/>
         </group>
 
+        <group id="com.github.sorinnv.codeBookmarks.GutterCodeBookmarksGroup" text="Code Bookmarks" popup="true">
+            <reference ref="com.github.sorinnv.codeBookmarks.ToggleBookmarkAction"/>
+            <separator/>
+
+            <add-to-group group-id="EditorGutterPopupMenu" anchor="after" relative-to-action="EditorGutterVcsPopupMenu"/>
+        </group>
 
     </actions>
 </idea-plugin>

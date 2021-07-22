@@ -31,10 +31,12 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.reference.SoftReference;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,14 +51,40 @@ public class Bookmark implements Navigatable {
     private OpenFileDescriptor myTarget;
     private Reference<RangeHighlighterEx> myHighlighterRef;
 
-    private final String myUrl;
+    private String myUrl;
+    private int myLine;
+
     @NotNull
     private String myDescription;
+
+    @ApiStatus.Internal
+    public Bookmark(@NotNull String url, int line, @NotNull String description) {
+        myUrl = url;
+        myLine = line;
+        myDescription = description;
+    }
 
     Bookmark(@NotNull Project project, @NotNull VirtualFile file, int line, @NotNull String description) {
         myDescription = description;
         myUrl = file.getUrl();
         initTarget(project, file, line);
+    }
+
+    @Nullable
+    OpenFileDescriptor init(@NotNull Project project) {
+        if (myTarget != null) {
+            throw new IllegalStateException("Bookmark is already initialized (file=" + myTarget + ")");
+        }
+
+        VirtualFile file = VirtualFileManager.getInstance().findFileByUrl(myUrl);
+        if (file == null) {
+            return null;
+        }
+
+        myUrl = null;
+        initTarget(project, file, myLine);
+        myLine = -1;
+        return myTarget;
     }
 
     private void initTarget(@NotNull Project project, @NotNull VirtualFile file, int line) {
