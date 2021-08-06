@@ -1,9 +1,7 @@
 package com.github.sorinnv.codeBookmarks.toolWindow;
 
 import com.github.sorinnv.codeBookmarks.Bookmark;
-import com.github.sorinnv.codeBookmarks.BookmarksManager;
 import com.intellij.ide.dnd.aware.DnDAwareTree;
-import com.intellij.ide.favoritesTreeView.FavoritesListener;
 import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.projectView.impl.ProjectViewTree;
 import com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode;
@@ -21,7 +19,6 @@ import com.intellij.util.EditSourceOnDoubleClickHandler;
 import com.intellij.util.EditSourceOnEnterKeyHandler;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.tree.TreeUtil;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 
@@ -29,7 +26,6 @@ import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
-import java.util.List;
 
 public class BookmarksToolWindow {
     private final JPanel content = new JPanel();
@@ -73,40 +69,6 @@ public class BookmarksToolWindow {
         panel.setBorder(JBUI.Borders.empty());
         content.add(new JBScrollPane(panel), BorderLayout.CENTER);
         content.setBorder(JBUI.Borders.empty());
-
-        BookmarksManager bookmarksManager = project.getService(BookmarksManager.class);
-        bookmarksManager.addBookmarksListener(new FavoritesListener() {
-            @Override
-            public void rootsChanged() {
-                doUpdate();
-            }
-
-            @Override
-            public void listAdded(@NotNull String listName) {
-                doUpdate();
-            }
-
-            @Override
-            public void listRemoved(@NotNull String listName) {
-                doUpdate();
-            }
-        }, project);
-    }
-    private void doUpdate() {
-        List<Bookmark> bookmarkList = BookmarksManager.getInstance(project).getBookmarks();
-
-        //tree.removeAll();
-
-        for (Bookmark bookmark: bookmarkList) {
-            tree.add(new JTextField(bookmark.getDescription() + " " +
-                    bookmark.getUrl() + ": " +
-                    bookmark.getLine()));
-        }
-
-        System.out.println("tree have some changes");
-
-        //tree.revalidate();
-        tree.repaint();
     }
 
     public JPanel getContent() {
