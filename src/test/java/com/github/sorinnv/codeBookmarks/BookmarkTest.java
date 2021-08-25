@@ -1,6 +1,7 @@
 package com.github.sorinnv.codeBookmarks;
 
-import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.editor.impl.DocumentMarkupModel;
+import com.intellij.openapi.editor.markup.RangeHighlighter;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 
 public class BookmarkTest extends BasePlatformTestCase {
@@ -14,21 +15,20 @@ public class BookmarkTest extends BasePlatformTestCase {
         myFixture.configureByFile("BookmarkTestData.java");
     }
 
-    public void testCreatingBookmark() {
+    public void testToggleBookmark() {
         initFixture();
-        VirtualFile file = myFixture.getFile().getVirtualFile();
-        int line = myFixture.getEditor().getCaretModel().getLogicalPosition().line;
-        String description = "description";
-        assertNotNull(file);
-        Bookmark bookmark = new Bookmark(myFixture.getProject(),
-                file,
-                line,
-                description);
-        assertEquals(line, bookmark.getLine());
-        assertEquals(bookmark.getFile(), file);
-        assertEquals(description, bookmark.getDescription());
-        assertTrue(bookmark.isValid());
-        assertEquals(file.getUrl(), bookmark.getUrl());
-        assertEquals(BookmarkIcons.GutterIcon, bookmark.getIcon());
+        myFixture.performEditorAction("com.github.sorinnv.codeBookmarks.ToggleBookmarkAction");
+        assertSize(1, myFixture.findAllGutters());
+        assertEquals(myFixture.findAllGutters().get(0).getIcon(), BookmarkIcons.GutterIcon);
+
+        RangeHighlighter[] highlighters = DocumentMarkupModel.forDocument(myFixture.getEditor().getDocument(),
+                myFixture.getProject(),
+                true).getAllHighlighters();
+        for (final RangeHighlighter highlighter : highlighters) {
+            assertEquals(highlighter.getStartOffset(), myFixture.getCaretOffset());
+        }
+
+        myFixture.performEditorAction("com.github.sorinnv.codeBookmarks.ToggleBookmarkAction");
+        assertSize(0, myFixture.findAllGutters());
     }
 }
