@@ -35,8 +35,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 @State(name = "Bookmark_manager", storages = {
-        @Storage(StoragePathMacros.PRODUCT_WORKSPACE_FILE),
-        @Storage(value = StoragePathMacros.WORKSPACE_FILE, deprecated = true)
+        @Storage(StoragePathMacros.PRODUCT_WORKSPACE_FILE)
 })
 public final class BookmarkManager implements PersistentStateComponent<Element> {
     private static final int MAX_AUTO_DESCRIPTION_SIZE = 50;
