@@ -17,18 +17,16 @@ public class BookmarkTest extends BasePlatformTestCase {
 
     public void testToggleBookmark() {
         initFixture();
-        myFixture.performEditorAction("com.github.sorinnv.codeBookmarks.ToggleBookmarkAction");
+        myFixture.performEditorAction(ToggleBookmarkAction.class.getName());
         assertSize(1, myFixture.findAllGutters());
         assertEquals(myFixture.findAllGutters().get(0).getIcon(), BookmarkIcons.GutterIcon);
 
         RangeHighlighter[] highlighters = DocumentMarkupModel.forDocument(myFixture.getEditor().getDocument(),
-                myFixture.getProject(),
-                true).getAllHighlighters();
-        for (final RangeHighlighter highlighter : highlighters) {
-            assertEquals(highlighter.getStartOffset(), myFixture.getCaretOffset());
-        }
+                myFixture.getProject(), true).getAllHighlighters();
+        assertSize(1, highlighters);
+        assertEquals(highlighters[0].getStartOffset(), myFixture.getCaretOffset());
 
-        myFixture.performEditorAction("com.github.sorinnv.codeBookmarks.ToggleBookmarkAction");
+        myFixture.performEditorAction(ToggleBookmarkAction.class.getName());
         assertSize(0, myFixture.findAllGutters());
     }
 }
