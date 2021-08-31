@@ -5,6 +5,7 @@ import com.intellij.ide.dnd.aware.DnDAwareTree;
 import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.projectView.impl.ProjectViewTree;
 import com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode;
+import com.intellij.ide.util.treeView.NodeRenderer;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.IdeActions;
@@ -19,6 +20,7 @@ import com.intellij.util.EditSourceOnDoubleClickHandler;
 import com.intellij.util.EditSourceOnEnterKeyHandler;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.tree.TreeUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 
@@ -50,12 +52,26 @@ public class BookmarksToolWindow {
                 return ProjectViewTree.getColorForElement(getPsiElement(object));
             }
         };
+
+        tree.add(new JTextField("some text"));
+        tree.add(new JTextField("some text1"));
+        tree.add(new JTextField("some text2"));
+        tree.repaint();
+
         TreeUtil.installActions(tree);
         tree.setRootVisible(false);
         tree.setShowsRootHandles(true);
         tree.setLargeModel(true);
         new TreeSpeedSearch(tree);
         ToolTipManager.sharedInstance().registerComponent(tree);
+
+        tree.setCellRenderer(new NodeRenderer() {
+            @Override
+            public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+                super.customizeCellRenderer(tree, value, selected, expanded, leaf, row, hasFocus);
+            }
+        });
+
         EditSourceOnDoubleClickHandler.install(tree);
         EditSourceOnEnterKeyHandler.install(tree);
 
